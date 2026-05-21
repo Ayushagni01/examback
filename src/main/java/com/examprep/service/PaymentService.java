@@ -56,6 +56,7 @@ public class PaymentService {
                     "orderId", mockOrderId,
                     "amount", PREPP_PLUS_PRICE,
                     "currency", "INR",
+                    "keyId", keyId,
                     "mock", true
             );
         }
@@ -85,6 +86,7 @@ public class PaymentService {
                     "orderId", order.get("id"),
                     "amount", PREPP_PLUS_PRICE,
                     "currency", "INR",
+                    "keyId", keyId,
                     "mock", false
             );
 
