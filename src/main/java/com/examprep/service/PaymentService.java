@@ -37,6 +37,29 @@ public class PaymentService {
     private static final int PREPP_PLUS_DURATION_DAYS = 365;
 
     public Map<String, Object> createOrder(User user) {
+        if ("placeholder_secret".equals(keySecret) || "rzp_test_placeholder".equals(keyId)) {
+            log.info("Using developer/placeholder credentials. Bypassing Razorpay order generation for testing.");
+            String mockOrderId = "order_mock_" + System.currentTimeMillis();
+            
+            // Save pending payment record in DB
+            Payment payment = Payment.builder()
+                    .user(user)
+                    .planName("Prepp+ Annual")
+                    .amount(PREPP_PLUS_PRICE)
+                    .razorpayOrderId(mockOrderId)
+                    .status(Payment.PaymentStatus.PENDING)
+                    .planDurationDays(PREPP_PLUS_DURATION_DAYS)
+                    .build();
+            paymentRepository.save(payment);
+
+            return Map.of(
+                    "orderId", mockOrderId,
+                    "amount", PREPP_PLUS_PRICE,
+                    "currency", "INR",
+                    "mock", true
+            );
+        }
+
         try {
             RazorpayClient razorpay = new RazorpayClient(keyId, keySecret);
 
@@ -61,7 +84,8 @@ public class PaymentService {
             return Map.of(
                     "orderId", order.get("id"),
                     "amount", PREPP_PLUS_PRICE,
-                    "currency", "INR"
+                    "currency", "INR",
+                    "mock", false
             );
 
         } catch (RazorpayException e) {
