@@ -1,0 +1,22 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# Log files
+*.log
+boot.log
+build.log
+
+# Crash dumps
+*.dat
+*.out
+
+# IDEs and editors
+.idea/
+*.iml
+*.iws
+.settings/
+.classpath
+.project
+.factorypath
+bin/

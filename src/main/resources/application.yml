@@ -1,0 +1,103 @@
+spring:
+  application:
+    name: examprep-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/testexam?useSSL=false&serverTimezone=Asia/Kolkata&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      # password: yourpassword  # uncomment if Redis has password
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 600000  # 10 minutes
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your@gmail.com}
+    password: ${MAIL_PASSWORD:yourpassword}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+# Server
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+jwt:
+  secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+  access-token-expiry: 86400000    # 24 hours in ms
+  refresh-token-expiry: 604800000  # 7 days in ms
+
+# OTP Configuration
+otp:
+  expiry-minutes: 5
+  length: 6
+  # For production: use MSG91 or Twilio
+  # msg91:
+  #   api-key: ${MSG91_API_KEY}
+  #   template-id: ${MSG91_TEMPLATE_ID}
+
+# Razorpay
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
+  key-secret: ${RAZORPAY_KEY_SECRET:placeholder_secret}
+
+# App Config
+app:
+  name: IndiaExamPrep
+  frontend-url: http://localhost:3000
+  cors-allowed-origins: http://localhost:3000,http://localhost:5173
+
+# Swagger
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.examprep: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
