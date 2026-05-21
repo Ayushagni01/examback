@@ -31,6 +31,14 @@ public class DataSeeder implements CommandLineRunner {
         if (testSeriesRepository.findBySlug("upsc-cse-prelims-mock-1").isEmpty()) {
             log.info("UPSC CSE Prelims Mock 1 not found. Seeding now...");
             seedUpscMockTest();
+        } else {
+            testSeriesRepository.findBySlug("upsc-cse-prelims-mock-1").ifPresent(test -> {
+                if (test.getAccessType() != TestSeries.AccessType.PREMIUM) {
+                    test.setAccessType(TestSeries.AccessType.PREMIUM);
+                    testSeriesRepository.save(test);
+                    log.info("Updated UPSC Mock Test to PREMIUM for testing.");
+                }
+            });
         }
 
         if (userRepository.count() > 0) {
@@ -287,7 +295,7 @@ public class DataSeeder implements CommandLineRunner {
                 .description("Sample UPSC mock test covering history, polity, geography, economy, and environment.")
                 .type(TestSeries.TestType.FULL_MOCK).totalQuestions(5).totalMarks(10.0)
                 .durationMinutes(20).negativeMarking(0.33)
-                .exam(upscExam).accessType(TestSeries.AccessType.FREE)
+                .exam(upscExam).accessType(TestSeries.AccessType.PREMIUM)
                 .questions(new java.util.ArrayList<>())
                 .build();
 
