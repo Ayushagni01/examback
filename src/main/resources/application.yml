@@ -76,8 +76,8 @@ otp:
 
 # Razorpay
 razorpay:
-  key-id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
-  key-secret: ${RAZORPAY_KEY_SECRET:placeholder_secret}
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_SrtUjxu49L5xlP}
+  key-secret: ${RAZORPAY_KEY_SECRET:AwyHaa24GuEtCfi6hI13TBz3}
 
 # App Config
 app:
