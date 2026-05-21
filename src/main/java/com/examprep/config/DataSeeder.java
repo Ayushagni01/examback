@@ -39,6 +39,13 @@ public class DataSeeder implements CommandLineRunner {
                     log.info("Updated UPSC Mock Test to PREMIUM for testing.");
                 }
             });
+            testSeriesRepository.findBySlug("ssc-cgl-mock-1").ifPresent(test -> {
+                if (test.getAccessType() != TestSeries.AccessType.PREMIUM) {
+                    test.setAccessType(TestSeries.AccessType.PREMIUM);
+                    testSeriesRepository.save(test);
+                    log.info("Updated SSC Mock Test to PREMIUM for testing.");
+                }
+            });
         }
 
         if (userRepository.count() > 0) {
@@ -112,7 +119,8 @@ public class DataSeeder implements CommandLineRunner {
                 .title("SSC CGL Tier 1 Full Mock Test 1").slug("ssc-cgl-mock-1")
                 .description("Complete 100-question mock test based on latest SSC CGL pattern")
                 .type(TestSeries.TestType.FULL_MOCK).totalQuestions(25).totalMarks(50.0)
-                .durationMinutes(60).negativeMarking(0.50).exam(exams.get(0)).build());
+                .durationMinutes(60).negativeMarking(0.50).exam(exams.get(0))
+                .accessType(TestSeries.AccessType.PREMIUM).build());
         addSSCQuestions(sscMock);
 
         // IBPS PO Mock
