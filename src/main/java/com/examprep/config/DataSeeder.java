@@ -80,64 +80,93 @@ public class DataSeeder implements CommandLineRunner {
         };
         int order = 1;
         for (String[] d : data) {
-            cats.add(categoryRepository.save(ExamCategory.builder()
-                    .name(d[0]).slug(d[1]).description(d[2]).sortOrder(order++).build()));
+            final int currentOrder = order++;
+            cats.add(categoryRepository.findBySlug(d[1]).orElseGet(() -> 
+                categoryRepository.save(ExamCategory.builder()
+                    .name(d[0]).slug(d[1]).description(d[2]).sortOrder(currentOrder).build())
+            ));
         }
         return cats;
     }
 
     private List<Exam> seedExams(List<ExamCategory> cats) {
         List<Exam> exams = new ArrayList<>();
-        // SSC
-        exams.add(examRepository.save(Exam.builder().name("SSC CGL").slug("ssc-cgl").fullName("Combined Graduate Level Examination")
+        // SSC CGL
+        exams.add(examRepository.findBySlug("ssc-cgl").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("SSC CGL").slug("ssc-cgl").fullName("Combined Graduate Level Examination")
                 .description("Staff Selection Commission CGL for Group B and C posts").conductingBody("SSC").category(cats.get(0))
-                .isFeatured(true).examDate(LocalDate.of(2026, 8, 15)).vacancyCount(8000).build()));
-        exams.add(examRepository.save(Exam.builder().name("SSC CHSL").slug("ssc-chsl").fullName("Combined Higher Secondary Level")
+                .isFeatured(true).examDate(LocalDate.of(2026, 8, 15)).vacancyCount(8000).build())
+        ));
+        // SSC CHSL
+        exams.add(examRepository.findBySlug("ssc-chsl").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("SSC CHSL").slug("ssc-chsl").fullName("Combined Higher Secondary Level")
                 .description("For LDC, JSA, PA, SA and DEO posts").conductingBody("SSC").category(cats.get(0))
-                .examDate(LocalDate.of(2026, 9, 10)).vacancyCount(4500).build()));
+                .examDate(LocalDate.of(2026, 9, 10)).vacancyCount(4500).build())
+        ));
         // Banking
-        exams.add(examRepository.save(Exam.builder().name("IBPS PO").slug("ibps-po").fullName("Institute of Banking Personnel Selection - PO")
+        exams.add(examRepository.findBySlug("ibps-po").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("IBPS PO").slug("ibps-po").fullName("Institute of Banking Personnel Selection - PO")
                 .description("Probationary Officer recruitment for public sector banks").conductingBody("IBPS").category(cats.get(1))
-                .isFeatured(true).examDate(LocalDate.of(2026, 10, 5)).vacancyCount(3500).build()));
-        exams.add(examRepository.save(Exam.builder().name("SBI PO").slug("sbi-po").fullName("State Bank of India PO")
+                .isFeatured(true).examDate(LocalDate.of(2026, 10, 5)).vacancyCount(3500).build())
+        ));
+        // SBI PO
+        exams.add(examRepository.findBySlug("sbi-po").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("SBI PO").slug("sbi-po").fullName("State Bank of India PO")
                 .description("SBI Probationary Officer recruitment").conductingBody("SBI").category(cats.get(1))
-                .isFeatured(true).examDate(LocalDate.of(2026, 11, 20)).vacancyCount(2000).build()));
+                .isFeatured(true).examDate(LocalDate.of(2026, 11, 20)).vacancyCount(2000).build())
+        ));
         // UPSC
-        exams.add(examRepository.save(Exam.builder().name("UPSC CSE").slug("upsc-cse").fullName("Civil Services Examination")
+        exams.add(examRepository.findBySlug("upsc-cse").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("UPSC CSE").slug("upsc-cse").fullName("Civil Services Examination")
                 .description("India's premier civil services examination for IAS, IPS, IFS").conductingBody("UPSC").category(cats.get(2))
-                .isFeatured(true).examDate(LocalDate.of(2026, 6, 1)).vacancyCount(1000).build()));
+                .isFeatured(true).examDate(LocalDate.of(2026, 6, 1)).vacancyCount(1000).build())
+        ));
         // Railways
-        exams.add(examRepository.save(Exam.builder().name("RRB NTPC").slug("rrb-ntpc").fullName("Non-Technical Popular Categories")
+        exams.add(examRepository.findBySlug("rrb-ntpc").orElseGet(() -> 
+            examRepository.save(Exam.builder().name("RRB NTPC").slug("rrb-ntpc").fullName("Non-Technical Popular Categories")
                 .description("Railway recruitment for various non-technical posts").conductingBody("RRB").category(cats.get(3))
-                .isFeatured(true).examDate(LocalDate.of(2026, 7, 15)).vacancyCount(35000).build()));
+                .isFeatured(true).examDate(LocalDate.of(2026, 7, 15)).vacancyCount(35000).build())
+        ));
         return exams;
     }
 
     private void seedTestSeriesWithQuestions(List<Exam> exams) {
         // SSC CGL Mock
-        TestSeries sscMock = testSeriesRepository.save(TestSeries.builder()
+        TestSeries sscMock = testSeriesRepository.findBySlug("ssc-cgl-mock-1").orElseGet(() -> 
+            testSeriesRepository.save(TestSeries.builder()
                 .title("SSC CGL Tier 1 Full Mock Test 1").slug("ssc-cgl-mock-1")
                 .description("Complete 100-question mock test based on latest SSC CGL pattern")
                 .type(TestSeries.TestType.FULL_MOCK).totalQuestions(25).totalMarks(50.0)
                 .durationMinutes(60).negativeMarking(0.50).exam(exams.get(0))
-                .accessType(TestSeries.AccessType.PREMIUM).build());
-        addSSCQuestions(sscMock);
+                .accessType(TestSeries.AccessType.PREMIUM).build())
+        );
+        if (sscMock.getQuestions().isEmpty()) {
+            addSSCQuestions(sscMock);
+        }
 
         // IBPS PO Mock
-        TestSeries ibpsMock = testSeriesRepository.save(TestSeries.builder()
+        TestSeries ibpsMock = testSeriesRepository.findBySlug("ibps-po-mock-1").orElseGet(() -> 
+            testSeriesRepository.save(TestSeries.builder()
                 .title("IBPS PO Prelims Mock Test 1").slug("ibps-po-mock-1")
                 .description("Practice test based on IBPS PO Prelims pattern")
                 .type(TestSeries.TestType.FULL_MOCK).totalQuestions(25).totalMarks(25.0)
-                .durationMinutes(30).negativeMarking(0.25).exam(exams.get(2)).build());
-        addBankingQuestions(ibpsMock);
+                .durationMinutes(30).negativeMarking(0.25).exam(exams.get(2)).build())
+        );
+        if (ibpsMock.getQuestions().isEmpty()) {
+            addBankingQuestions(ibpsMock);
+        }
 
         // Free sectional
-        TestSeries gkTest = testSeriesRepository.save(TestSeries.builder()
+        TestSeries gkTest = testSeriesRepository.findBySlug("gk-quick-test").orElseGet(() -> 
+            testSeriesRepository.save(TestSeries.builder()
                 .title("General Knowledge Quick Test").slug("gk-quick-test")
                 .description("15-question GK quiz covering national and international affairs")
                 .type(TestSeries.TestType.TOPIC_WISE).totalQuestions(15).totalMarks(15.0)
-                .durationMinutes(15).negativeMarking(0.0).accessType(TestSeries.AccessType.FREE).build());
-        addGKQuestions(gkTest);
+                .durationMinutes(15).negativeMarking(0.0).accessType(TestSeries.AccessType.FREE).build())
+        );
+        if (gkTest.getQuestions().isEmpty()) {
+            addGKQuestions(gkTest);
+        }
     }
 
     private void addSSCQuestions(TestSeries ts) {
